@@ -52,7 +52,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     main.addEventListener('click', (event) => {
         if (!!event.target.dataset.pokemonId) {
-            console.log('Release', event.target.dataset.pokemonId)
             // delete pokemon
             fetch(POKEMONS_URL + '/' + event.target.dataset.pokemonId, {
                 method: 'DELETE',
@@ -83,10 +82,13 @@ window.addEventListener('DOMContentLoaded', () => {
             })
                 .then(res => res.json())
                 .then(data => {
-                    const li = pokemonLi(data);
-                    const ul = main.querySelector(`[data-id="${data.trainer_id}"] ul`)
-                    ul.appendChild(li)
-
+                    if (!data.status) {
+                        const li = pokemonLi(data);
+                        const ul = main.querySelector(`[data-id="${data.trainer_id}"] ul`)
+                        ul.appendChild(li)
+                    } else {
+                        alert(data.message)
+                    }
                 })
         }
     })
