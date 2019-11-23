@@ -15,23 +15,11 @@ window.addEventListener('DOMContentLoaded', () => {
         const button = document.createElement('button')
         button.setAttribute('data-trainer-id', trainer.id)
         button.innerText = 'Add Pokemon'
-        button.addEventListener('click')
         const ul = document.createElement('ul')
 
         trainer.pokemons.forEach((pokemon) => {
-            const li = document.createElement('li');
-            li.innerText = pokemon.nickname + ' (' + pokemon.species + ')';
-            const button = document.createElement('button');
-            button.className = 'release';
-            button.setAttribute('data-pokemon-id', pokemon.id);
-            button.innerText = 'Release';
-
-            li.appendChild(button);
+            const li = pokemonLi(pokemon)
             ul.appendChild(li);
-
-            button.addEventListener('click', (event) => {
-                // delete the thing
-            })
         })
 
         div.appendChild(p);
@@ -40,7 +28,6 @@ window.addEventListener('DOMContentLoaded', () => {
         main.appendChild(div);
     }
 
-    console.log(main)
     fetch(TRAINERS_URL)
         .then(res => res.json())
         .then(data => {
@@ -48,4 +35,60 @@ window.addEventListener('DOMContentLoaded', () => {
                 makeCard(trainer)
             })
         })
+        .then(() => {
+        })
+
+    function pokemonLi(pokemon) {
+        const li = document.createElement('li');
+        li.innerText = pokemon.nickname + ' (' + pokemon.species + ')';
+        const button = document.createElement('button');
+        button.className = 'release';
+        button.setAttribute('data-pokemon-id', pokemon.id);
+        button.innerText = 'Release';
+        li.appendChild(button);
+
+        return li
+    }
+
+    main.addEventListener('click', (event) => {
+        if (!!event.target.dataset.pokemonId) {
+            console.log('Release', event.target.dataset.pokemonId)
+            // delete pokemon
+            fetch(POKEMONS_URL + '/' + event.target.dataset.pokemonId, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: event.target.dataset.pokemonId
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    const button = main.querySelector(`[data-pokemon-id="${data.id}"]`)
+                    button.parentNode.parentNode.removeChild(button.parentNode)
+                })
+
+        }
+        else if (!!event.target.dataset.trainerId) {
+            // post new pokemon
+            fetch(POKEMONS_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    trainer_id: event.target.dataset.trainerId
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    const li = pokemonLi(data);
+                    const ul = main.querySelector(`[data-id="${data.trainer_id}"] ul`)
+                    ul.appendChild(li)
+
+                })
+        }
+    })
+
 });
