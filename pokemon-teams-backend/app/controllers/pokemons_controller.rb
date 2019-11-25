@@ -12,18 +12,6 @@ class PokemonsController < ApplicationController
     end
   end
 
-  # def fakermon(trainer)
-  #   name = Faker::Name.first_name
-  #   species = Faker::Games::Pokemon.name
-  #   pokemon = Pokemon.new(nickname: name, species: species, trainer_id: trainer.id)
-  #   if pokemon.valid?
-  #     pokemon.save
-  #     pokemon
-  #   else
-  #     { status: "error", code: 4000, message: pokemon.errors.full_messages[0] }
-  #   end
-  # end
-
   def destroy
     pokemon = Pokemon.find_by(id: pokemon_params[:id])
     if pokemon
