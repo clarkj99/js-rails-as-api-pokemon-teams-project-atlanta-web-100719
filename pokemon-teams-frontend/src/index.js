@@ -86,7 +86,7 @@ window.addEventListener('DOMContentLoaded', () => {
             .then(res => res.json())
             .then(data => {
                 const button = main.querySelector(`[data-pokemon-id="${data.id}"]`)
-                button.parentNode.parentNode.removeChild(button.parentNode)
+                button.parentNode.remove();
             })
     }
 
